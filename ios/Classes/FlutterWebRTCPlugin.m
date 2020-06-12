@@ -3,6 +3,8 @@
 #import "FlutterRTCMediaStream.h"
 #import "FlutterRTCDataChannel.h"
 #import "FlutterRTCVideoRenderer.h"
+#import "WebRTC/RTCAudioTrack.h"
+#import "FlutterRTCAudioSink.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <WebRTC/WebRTC.h>
@@ -197,7 +199,7 @@
 
         RTCMediaStreamTrack *track = [self trackForId: trackId];
         if (track != nil && [track isKindOfClass:[RTCVideoTrack class]]) {
-            RTCVideoTrack *videoTrack = (RTCVideoTrack *)track;
+           RTCVideoTrack *videoTrack = (RTCVideoTrack *)track;
             [self mediaStreamTrackCaptureFrame:videoTrack toPath:path result:result];
         } else {
             if (track == nil) {
@@ -206,7 +208,36 @@
                 result([FlutterError errorWithCode:[@"Track is class of " stringByAppendingString:[[track class] description]] message:nil details:nil]);
             }
         }
-    } else if ([@"setLocalDescription" isEqualToString:call.method]) {
+    } else if ([@"captureAudioIOs" isEqualToString:call.method]) {
+        NSDictionary* argsMap = call.arguments;
+        NSString* audioTrackId = argsMap[@"audioTrackId"];
+        RTCMediaStreamTrack *audioTrack = self.localTracks[audioTrackId];
+        if (audioTrack != nil && [audioTrack isKindOfClass:[RTCAudioTrack class]]) {
+            RTCAudioTrack *track = (RTCAudioTrack *) audioTrack;
+            FlutterRTCAudioSink* _audioSink = [[FlutterRTCAudioSink alloc] initWithAudioTrack:track];
+            _audioSink.bufferCallback = ^(CMSampleBufferRef buffer){
+                        NSLog(@"💙💙💙💙💙💙💙💙Received buffer %@💙💙💙💙💙💙💙💙");
+                    };
+
+        } else {
+            NSLog(@"💙💙💙💙💙💙💙💙NULL AUDIO TRACK OR NOT OF AUDIO TYPE!!!!!!! %@💙💙💙💙💙💙💙💙");
+        }
+        /*NSDictionary* argsMap = call.arguments;
+        NSString* trackId = argsMap[@"trackId"];
+        RTCMediaStreamTrack *track = [self trackForId: trackId];
+        if (track != nil && [track isKindOfClass:[RTCVideoTrack class]]) {
+            RTCVideoTrack *videoTrack = (RTCVideoTrack *)track;
+            [self mediaStreamTrackCaptureFrame:videoTrack toPath:path result:result];
+        } else {
+            if (track == nil) {
+                result([FlutterError errorWithCode:@"Track is nil" message:nil details:nil]);
+            } else {
+                result([FlutterError errorWithCode:[@"Track is class of " stringByAppendingString:[[track class] description]] message:nil details:nil]);
+            }
+        }*/
+        result(nil);
+    }
+    else if ([@"setLocalDescription" isEqualToString:call.method]) {
         NSDictionary* argsMap = call.arguments;
         NSString* peerConnectionId = argsMap[@"peerConnectionId"];
         RTCPeerConnection *peerConnection = self.peerConnections[peerConnectionId];
