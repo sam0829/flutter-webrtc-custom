@@ -195,16 +195,26 @@ class GetUserMediaImpl{
      */
     private void addDefaultAudioConstraints(MediaConstraints audioConstraints) {
         audioConstraints.optional.add(
-            new MediaConstraints.KeyValuePair("googNoiseSuppression", "true"));
+                new MediaConstraints.KeyValuePair("googNoiseSuppression", "false"));
         audioConstraints.optional.add(
-            new MediaConstraints.KeyValuePair("googEchoCancellation", "true"));
+                new MediaConstraints.KeyValuePair("googEchoCancellation", "true"));
         audioConstraints.optional.add(
-            new MediaConstraints.KeyValuePair("echoCancellation", "true"));
+                new MediaConstraints.KeyValuePair("echoCancellation", "true"));
         audioConstraints.optional.add(
-            new MediaConstraints.KeyValuePair("googEchoCancellation2", "true"));
+                new MediaConstraints.KeyValuePair("noiseSuppression", "false"));
         audioConstraints.optional.add(
-            new MediaConstraints.KeyValuePair(
-                    "googDAEchoCancellation", "true"));
+                new MediaConstraints.KeyValuePair("googEchoCancellation2", "true"));
+        audioConstraints.optional.add(
+                new MediaConstraints.KeyValuePair("latency", "0"));
+        audioConstraints.optional.add(
+                new MediaConstraints.KeyValuePair("sampleRate", "48000"));
+        audioConstraints.optional.add(
+                new MediaConstraints.KeyValuePair("sampleSize", "16"));
+        audioConstraints.optional.add(
+                new MediaConstraints.KeyValuePair("volume", "1.0"));
+        audioConstraints.optional.add(
+                new MediaConstraints.KeyValuePair(
+                        "googDAEchoCancellation", "true"));
     }
 
     /**
@@ -779,6 +789,7 @@ class GetUserMediaImpl{
      *  @throws Exception lot of different exceptions, pass back to dart layer to print them at least
      *  **/
     void startRecordingToFile(String path, Integer id, @Nullable VideoTrack videoTrack, @Nullable AudioChannel audioChannel) throws Exception {
+        Log.e("Recording", "@@@@@@@@@@@ startRecording native");
         AudioSamplesInterceptor interceptor = null;
         if (audioChannel == AudioChannel.INPUT)
             interceptor = inputSamplesInterceptor;
