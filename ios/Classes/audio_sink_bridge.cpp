@@ -1,13 +1,17 @@
 #include "media_stream_interface.h"
 #include "FlutterRTCAudioSink-Interface.h"
+#include <syslog.h>
 
 class AudioSinkBridge : public webrtc::AudioTrackSinkInterface {
-private:
-    void* sink;
+//private:
+    //void* sink;
 
 public:
-    AudioSinkBridge(void* sink1) {
+    /*AudioSinkBridge(void* sink1) {
         sink = sink1;
+    }*/
+    AudioSinkBridge() {
+
     }
     void OnData(const void* audio_data,
                         int bits_per_sample,
@@ -15,12 +19,14 @@ public:
                         size_t number_of_channels,
                         size_t number_of_frames)
     {
-        RTCAudioSinkCallback(sink,
+
+        syslog(LOG_ERR, "!!!!!!!!!!!!!!!!OnData!");
+        /*RTCAudioSinkCallback(sink,
                              audio_data,
                              bits_per_sample,
                              sample_rate,
                              number_of_channels,
                              number_of_frames
-        );
+        );*/
     };
 };

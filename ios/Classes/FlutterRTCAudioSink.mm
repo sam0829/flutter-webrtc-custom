@@ -13,9 +13,10 @@
 - (instancetype) initWithAudioTrack:(RTCAudioTrack* )audio {
     self = [super init];
     webrtc::scoped_refptr<webrtc::AudioSourceInterface> audioSourcePtr = audio.source.nativeAudioSource;
-    _audioSource = audioSourcePtr.get();
-    _bridge = new AudioSinkBridge((void*)CFBridgingRetain(self));
-    _audioSource->AddSink(_bridge);
+    //_audioSource = audioSourcePtr.get();
+    //_bridge = new AudioSinkBridge((void*)CFBridgingRetain(self));
+    //_bridge = new AudioSinkBridge();
+    //_audioSource->AddSink(_bridge);
     return self;
 }
 

@@ -11,7 +11,9 @@ class MediaRecorder {
   final _recorderId = _random.nextInt(0x7FFFFFFF);
 
   Future<void> start(String path,
-      {MediaStreamTrack videoTrack, RecorderAudioChannel audioChannel
+      {MediaStreamTrack videoTrack,
+        MediaStreamTrack audioTrack,
+        RecorderAudioChannel audioChannel,
       //TODO: add codec/quality options
       }) async {
     if (path == null) throw ArgumentError.notNull("path");
@@ -22,6 +24,7 @@ class MediaRecorder {
       'path': path,
       'audioChannel': audioChannel?.index,
       'videoTrackId': videoTrack?.id,
+      'audioTrackId' : audioTrack?.id,
       'recorderId': _recorderId
     });
   }
