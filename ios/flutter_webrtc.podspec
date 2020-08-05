@@ -17,8 +17,10 @@ A new flutter plugin project.
   s.dependency 'Flutter'
   s.dependency 'Libyuv', '1703'
   s.library = 'stdc++'
-  s.dependency 'GoogleWebRTC', '1.1.29400'
   s.ios.deployment_target = '10.0'
   s.static_framework = true
+  s.preserve_paths = 'WebRTC.framework'
+  s.xcconfig = { 'OTHER_LDFLAGS' => '-framework WebRTC' }
+  s.vendored_frameworks = 'WebRTC.framework'
 end
 

@@ -6,6 +6,7 @@
 #import "WebRTC/RTCI420Buffer.h"
 #import "WebRTC/RTCAudioTrack.h"
 #import "FlutterRTCAudioSink.h"
+#import "FlutterRTCAudioSinkNew.h"
 
 #include "libyuv.h"
 
@@ -15,6 +16,7 @@
     CGSize _renderSize;
     RTCVideoRotation _rotation;
     FlutterRTCAudioSink* _audioSink;
+    FlutterRTCAudioSinkNew* _audioSinkNew;
     AVAssetWriterInput* _audioWriter;
 }
 
@@ -27,6 +29,10 @@
     self.output = out;
     [video addRenderer:self];
     framesCount = 0;
+    if (audio != nil) {
+       _audioSinkNew = [[FlutterRTCAudioSinkNew alloc] init];
+       [audio.source AddSink:_audioSinkNew];
+    }
     /*if (audio != nil)
         _audioSink = [[FlutterRTCAudioSink alloc] initWithAudioTrack:audio];
     else
@@ -48,7 +54,7 @@
     self.writerInput.expectsMediaDataInRealTime = true;
     self.writerInput.mediaTimeScale = 30;
 
-    if (_audioSink != nil) {
+    if (_audioSinkNew != nil) {
         AudioChannelLayout acl;
         bzero(&acl, sizeof(acl));
         acl.mChannelLayoutTag = kAudioChannelLayoutTag_Mono;
@@ -62,7 +68,7 @@
         _audioWriter = [[AVAssetWriterInput alloc]
                         initWithMediaType:AVMediaTypeAudio
                             outputSettings:audioOutputSettings
-                        sourceFormatHint:_audioSink.format];
+                        sourceFormatHint:_audioSinkNew.format];
         _audioWriter.expectsMediaDataInRealTime = true;
     }
 
@@ -75,9 +81,9 @@
         NSLog(@"%@",[error localizedDescription]);
     self.assetWriter.shouldOptimizeForNetworkUse = true;
     [self.assetWriter addInput:self.writerInput];
-    if (_audioWriter != nil && _audioSink != nil) {
+    if (_audioWriter != nil && _audioSinkNew != nil) {
         [self.assetWriter addInput:_audioWriter];
-        _audioSink.bufferCallback = ^(CMSampleBufferRef buffer){
+        _audioSinkNew.bufferCallback = ^(CMSampleBufferRef buffer){
             if (self->_audioWriter.readyForMoreMediaData) {
                 if (![self->_audioWriter appendSampleBuffer:buffer])
                     NSLog(@"Audioframe not appended %@", self.assetWriter.error);
@@ -135,9 +141,9 @@
 }
 
 - (void)stop {
-    if (_audioSink != nil) {
-        _audioSink.bufferCallback = nil;
-        [_audioSink close];
+    if (_audioSinkNew != nil) {
+        _audioSinkNew.bufferCallback = nil;
+        //[_audioSinkNew close];
     }
     [self.videoTrack removeRenderer:self];
     [self.writerInput markAsFinished];

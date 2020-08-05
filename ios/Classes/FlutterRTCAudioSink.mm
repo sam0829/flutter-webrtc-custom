@@ -6,7 +6,7 @@
 #include "audio_sink_bridge.cpp"
 
 @implementation FlutterRTCAudioSink {
-    AudioSinkBridge *_bridge;
+    //AudioSinkBridge *_bridge;
     webrtc::AudioSourceInterface* _audioSource;
 }
 
@@ -21,9 +21,9 @@
 }
 
 - (void) close {
-    _audioSource->RemoveSink(_bridge);
-    delete _bridge;
-    _bridge = nil;
+    //_audioSource->RemoveSink(_bridge);
+    //delete _bridge;
+    //_bridge = nil;
     _audioSource = nil;
 }
 #ifdef __cplusplus

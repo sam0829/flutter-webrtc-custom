@@ -6,10 +6,11 @@
 #import "WebRTC/RTCAudioTrack.h"
 #import "FlutterRTCAudioSink.h"
 #import "FlutterRTCMediaRecorder.h"
+#import "FlutterRTCAudioSinkNew.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <WebRTC/WebRTC.h>
-
+#include "audio_sink_bridge.cpp"
 
 
 @implementation FlutterWebRTCPlugin {
@@ -213,13 +214,15 @@
     } else if ([@"captureAudioIOs" isEqualToString:call.method]) {
         NSDictionary* argsMap = call.arguments;
         NSString* audioTrackId = argsMap[@"audioTrackId"];
-        RTCMediaStreamTrack *audioTrack = self.localTracks[audioTrackId];
+        RTCMediaStreamTrack *audioTrack = [self trackForId: audioTrackId];
         if (audioTrack != nil && [audioTrack isKindOfClass:[RTCAudioTrack class]]) {
             RTCAudioTrack *track = (RTCAudioTrack *) audioTrack;
-            FlutterRTCAudioSink* _audioSink = [[FlutterRTCAudioSink alloc] initWithAudioTrack:track];
+            /*FlutterRTCAudioSink* _audioSink = [[FlutterRTCAudioSink alloc] initWithAudioTrack:track];
             _audioSink.bufferCallback = ^(CMSampleBufferRef buffer){
                         NSLog(@"💙💙💙💙💙💙💙💙Received buffer %@💙💙💙💙💙💙💙💙");
-                    };
+                    };*/
+           FlutterRTCAudioSinkNew *sink = [[FlutterRTCAudioSinkNew alloc] init];
+           [track.source AddSink:sink];
 
         } else {
             NSLog(@"💙💙💙💙💙💙💙💙NULL AUDIO TRACK OR NOT OF AUDIO TYPE!!!!!!! %@💙💙💙💙💙💙💙💙");
